@@ -1,3 +1,31 @@
+# ============================================================
+# DL-14542 温显项目：NYIDE 6.11 / NYC_NY8 2.31（LLVM/Clang 22，CPU NY8BM84A）
+# 构建产物依据 project/App/DL-14542/DL-14542/makefile 的 clean 规则：
+#   rmdir OBJ  +  del $(TARGET).bin/.fpga/.elf/.lst/.map/.htm/.rom
+# 与 DL-14542.naprj（OutputPath = bin\Debug\ / bin\Release\）
+#   需纳入版本管理：工程源文件（.c/.h/.cb/.naprj/.NySln）、makefile、
+#                   Hardware 资料、.vscode/c_cpp_properties.json（IntelliSense 配置）
+# ============================================================
+OBJ/
+bin/
+*.bin
+*.fpga
+*.rom
+*.link.lst
+*.lst
+*.htm
+*.adb
+*.p
+*.s
+wmf.tmp
+
+# NYIDE / clangd 生成：compile_commands.json 内含本机绝对路径，.cache 为 clangd 索引缓存
+compile_commands.json
+.cache/
+
+# ------------------------------------------------------------
+# 通用 C 工程忽略规则（GitHub C 模板）
+# ------------------------------------------------------------
 # Prerequisites
 *.d
 

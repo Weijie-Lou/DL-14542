@@ -1,0 +1,51 @@
+{
+    // 九齐 NY8 系列 / NY8BM84A，工具链：NYIDE + NYC_NY8（LLVM/Clang 22，NY8 后端 clang.exe）
+    // 构建参数来源：project/App/DL-14542/DL-14542/makefile 与同目录 compile_commands.json
+    //   clang.exe -c -mcpu=ny8bm84a ... -I"Include" -I"C:\Nyquest\NYIDE\include\NY8 C"
+    // 头文件实际解析结果见 OBJ/User/*.d：
+    //   ny8.h、common.h、ny8bm84a.h、common-macro.h、ny8_constant.h、ny8bm84a_constant.h、stdint.h
+    "configurations": [
+        {
+            "name": "NY8-NY8BM84A",
+            "includePath": [
+                // 工程自身头文件（源码以 #include "gpio.h" 形式引用）
+                "${workspaceFolder}/project/App/DL-14542/DL-14542/Include",
+                "${workspaceFolder}/project/App/DL-14542/DL-14542/User",
+                // 编译器自带：ny8.h（芯片分发）、ny8bm84a.h、common.h、common-macro.h、stdint.h
+                "C:/Nyquest/NYC_NY8/llvm/include",
+                // 芯片常量头：ny8_constant.h -> ny8bm84a_constant.h（寄存器位定义）
+                "C:/Nyquest/NYIDE/include/NY8 C"
+            ],
+            // 只需补齐 -mcpu 携带的 CPU 宏：__code/__data/__rpage 段限定符由该 clang 预定义为
+            // __attribute__((address_space(N)))，而 IntelliSense 下 common.h 的 #ifndef __code 分支
+            // 会将其置空；system.c 的 __interrupt(0) 亦由 common.h 展开为 interrupt 属性，均无需定义
+            "defines": [
+                // 等价于 makefile 的 -mcpu=ny8bm84a（clang 驱动的预定义宏，可用 clang -dM -E 查询）：
+                // ny8.h 依据 __ny8bm84a 选择 ny8bm84a.h，
+                // ny8_constant.h 依据同一宏选择 ny8bm84a_constant.h
+                "__ny8bm84a",
+                "__CPU_NY8BM84A",
+                "__NYC_NY8",
+                "__llvm_ny8__"
+            ],
+            // 置空以禁止本机 MSVC 探测覆盖 intelliSenseMode
+            "compilerPath": "",
+            // 置空以禁止 C/C++ 扩展读取工程内嵌套的 compile_commands.json：
+            // 其 CPU 由 -mcpu=ny8bm84a 传递，扩展不识别该选项，会导致 ny8.h 报 "not support CPU"
+            "compileCommands": "",
+            // makefile 未指定 -std（clang 22 默认 gnu17），取 c11 与本工具链其它工程保持一致
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-clang-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/project/App/DL-14542/DL-14542/Include",
+                    "C:/Nyquest/NYC_NY8/llvm/include",
+                    "C:/Nyquest/NYIDE/include/NY8 C"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
