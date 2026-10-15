@@ -9,10 +9,11 @@
 
  #include "gpio.h"
 
- /* 上电默认状态：所有端口为输出低（PA1 置高以关闭低电平有效的蜂鸣器），
-  * 引脚属性 = 输入浮动 / 输出推挽（无上下拉），方向寄存器全部设为输出 */
+ /* 上电默认状态：PORTA/PORTB/PORTC 全部输出低、方向寄存器全部设为输出，
+  * 引脚属性 = 输入浮动 / 输出推挽（无上下拉）；
+  * 其余外设所需引脚由各自初始化函数配置（如 PA2 = NTC 输入、PA1 = NTC 供电使能） */
  void GPIO_Init(void) {
-     PORTA = 0x02; /* PA1 = 1（蜂鸣器关闭），其余 PORTA 引脚输出低 */
+     PORTA = 0x00; /* PORTA 全部输出低 */
      PORTB = 0x00; /* PORTB 全部输出低 */
      PORTC = 0x00; /* PORTC 全部输出低 */
      IOSTA = 0x00; /* PORTA 全部设为输出（位 0 = 输出） */
@@ -32,8 +33,10 @@
  *==========================================================================*/
 static GPIO_Port GPIO_ResolvePort(const volatile __rpage unsigned char *port)
 {
-    if (port == &PORTA) return GPIO_PORTA;
-    if (port == &PORTB) return GPIO_PORTB;
+    if (port == &PORTA) 
+        return GPIO_PORTA;
+    if (port == &PORTB) 
+        return GPIO_PORTB;
     return GPIO_PORTC;
 }
 
@@ -84,20 +87,25 @@ void GPIO_SET_WAKEUP_IMPL(volatile __rpage unsigned char *port, GPIO_Pin pin, un
 
 void GPIO_SET_ANALOG_IMPL(volatile __rpage unsigned char *port, GPIO_Pin pin, unsigned char enable)
 {
-    GPIO_Port p = GPIO_ResolvePort(port);
-    unsigned char mask = (unsigned char)(1u << pin);
-    unsigned char sel;
-
-    switch (p) {
-        default:
-        case GPIO_PORTA: sel = C_Select_PACON; break;
-        case GPIO_PORTB: sel = C_Select_PBCON; break;
-        case GPIO_PORTC: sel = C_Select_PCCON; break;
-    }
-
+    GPIO_Port p = GPIO_ResolvePort(port);    
     /* ADCR[7:6] 选择 PxCON 映射到的端口 */
-    ADCR = (unsigned char)((ADCR & (unsigned char)~0xC0u) | sel);
+    switch (p) {        
+        case GPIO_PORTA: 
+            ADCR = (unsigned char)((ADCR & 0x4Fu) | C_Select_PACON); 
+            break;
+        case GPIO_PORTB: 
+            ADCR = (unsigned char)((ADCR & 0x4Fu) | C_Select_PBCON); 
+            break;
+        case GPIO_PORTC: 
+            ADCR = (unsigned char)((ADCR & 0x4Fu) | C_Select_PCCON); 
+            break;
+        default:
+            break;
+    }
+    
     /* PxCON 对应位：1 = 纯模拟引脚 */
-    PxCON = (unsigned char)(enable ? (PxCON | mask)
-                                  : (PxCON & (unsigned char)~mask));
+    if (enable)
+        PxCON = (unsigned char)(PxCON | (1u << pin));
+    else
+        PxCON = (unsigned char)(PxCON & (unsigned char)~(1u << pin));
 }

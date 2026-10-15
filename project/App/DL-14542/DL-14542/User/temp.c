@@ -1,11 +1,11 @@
-/**
+﻿/**
  * @file    temp.c
- * @brief   NTC 水温采集实现（ADC 采样 + 查表线性插值，输出 ℃ 整数 0~99）
+ * @brief   NTC 温度采集实现（ADC 采样 + 查表线性插值，输出 0.1℃ 单位的值 0~999）
  * @note
- *   采样链路：ADC(AN9/PB4, 12bit, 参考 VDD) → 丢弃首次值 → 4 次采样平均
- *             → 查表定位 5℃ 档 → 档内线性插值 → 1/8 递推平均滤波 → 输出温度
+ *   采样链路：ADC(PA2/AN2, 12bit, 参考 VDD) → 丢弃首次值 → 4 次采样平均
+ *             → 查表定位 5℃ 档 → 档内线性插值 → 1/16 递推平均滤波 → 输出温度
  *   说明：分压电阻 R_fix 与 NTC 均接 VDD，ADC 参考也是 VDD，属比例测量，
- *         因此 ADC 码值不受电池电压波动影响（配置字 VDD 标称 3.0V）
+ *         因此 ADC 码值不受电池电压波动影响
  */
 
 #include "temp.h"
@@ -36,12 +36,13 @@ static const uint16_t ADC_Res[] = {
     3772,  /* 95℃ 补偿-3.0℃ */
     3814,  /* 100℃ 补偿-3.0℃ */
 };
-#define TEMP_TABLE_CNT      (sizeof(ADC_Res) / sizeof(ADC_Res[0]))  /* 表项数（21 项，0~100℃ 每 5℃ 一项） */
-#define TEMP_STEP_C         50u      /* 表项温度步进 5℃ */
+#define TEMP_ADC_SAMPLE_CNT     4                       /* ADC 平均采样次数（不含被丢弃的首次转换） */
+#define TEMP_STEP_C             50u                     /* 表项温度步进 5℃（0.1℃ 单位，故为 50） */
+#define TEMP_TABLE_CNT          (sizeof(ADC_Res) / sizeof(ADC_Res[0]))  /* 表项数（21 项，0~100℃ 每 5℃ 一项） */
 
 /* 温度采样滤波状态 */
 typedef struct {
-    uint16_t avg;   /* 滤波后的温度值（1/8 递推平均，单位 ℃） */
+    uint16_t avg;   /* 滤波后的温度值（1/16 递推平均，0.1℃ 单位） */
     uint8_t  diff;  /* 递推平均的余数，避免整除误差累积 */
 } Temp_Sample_t;
 
@@ -49,20 +50,22 @@ Temp_Sample_t temp = {0, 0};                    /* 全局便于调试观察，�
 
 void Temp_Enable(void)
 {
-    GPIO_SET_ANALOG(NTC_PORT, NTC_PIN);                     /* NTC 引脚为模拟输入 */
+    // GPIO_SET_ANALOG(NTC_PORT, NTC_PIN);                     /* NTC 引脚为模拟输入 */
     GPIO_SET_INPUT(NTC_PORT, NTC_PIN);                      /* NTC 引脚为输入 */
 
+    // GPIO_SET_DIGITAL(NTC_ENABLE_PORT, NTC_ENABLE_PIN);      /* 关闭 NTC 使能引脚模拟输入 */
     GPIO_SET_OUTPUT(NTC_ENABLE_PORT, NTC_ENABLE_PIN);       /* NTC 使能引脚为输出 */
     GPIO_OUTPUT_HIGH(NTC_ENABLE_PORT, NTC_ENABLE_PIN);      /* 拉高 NTC 使能引脚 */
 }
 
-void Temp_Deinit(void)
+void Temp_Disable(void)
 {
-    GPIO_SET_DIGITAL(NTC_PORT, NTC_PIN);                    /* 关闭 NTC 引脚模拟输入 */
+    // GPIO_SET_DIGITAL(NTC_PORT, NTC_PIN);                    /* NTC 引脚为数字输入 */
     GPIO_SET_OUTPUT(NTC_PORT, NTC_PIN);                     /* NTC 引脚为输出 */
     GPIO_OUTPUT_LOW(NTC_PORT, NTC_PIN);                     /* 拉低 NTC 引脚 */
 
-    GPIO_SET_OUTPUT(NTC_ENABLE_PORT, NTC_ENABLE_PIN);       /* NTC 使能引脚为输出 */
+    // GPIO_SET_DIGITAL(NTC_ENABLE_PORT, NTC_ENABLE_PIN);      /* 关闭 NTC 引脚为数字输入 */
+    GPIO_SET_OUTPUT(NTC_ENABLE_PORT, NTC_ENABLE_PIN);       /* 关闭 NTC 使能引脚为输出 */
     GPIO_OUTPUT_LOW(NTC_ENABLE_PORT, NTC_ENABLE_PIN);       /* 拉低 NTC 使能引脚 */
 }
 
@@ -77,14 +80,14 @@ void Temp_Init(void)
 /*============================================================================
  * 温度读取（℃ 整数）
  *==========================================================================*/
-/** @brief 读取水温：ADC 采样 → 平均 → 查表插值 → 递推滤波，返回 ℃ 整数（0~99）
- *  @note  查表插值以 5℃ 档为基准，档内按 ADC 码值线性修正，结果为整度值（分辨率 1℃）；
- *         输出上限钳在 99℃（2 位数码管无法显示 100，避免十位段码溢出） */
-uint8_t Temp_Read(void)
+/** @brief 读取温度：ADC 采样 → 平均 → 查表插值 → 递推滤波，返回 0.1℃ 单位的值（0~999）
+ *  @note  查表插值以 5℃ 档为基准，档内按 ADC 码值线性修正，输出分辨率为 0.1℃；
+ *         低于表下限（0℃）输出 0，超出表上限先取 1000，再由输出上限钳到 999（即 99.9℃） */
+uint16_t Temp_Read(void)
 {
     uint8_t  i;
     uint16_t adc = 0, sum = 0, frac = 0, temp_val = 0;  
-    /* AN9 通道（PB4），参考电压 VDD，ADC 时钟 Fcpu/16，12bit 转换
+    /* AN2 通道（PA2），参考电压 VDD，ADC 时钟 Fcpu/16，12bit 转换
      * 首次转换结果丢弃：切换通道后的第一个值未稳定 */
     ADC_Init(NTC_ADC_CH, NTC_ADC_REF, NTC_ADC_CLK);
 	ADC_Convert();
@@ -122,14 +125,14 @@ uint8_t Temp_Read(void)
         temp_val = 0;  /* 如果 sum 为 0，则温度值直接置为 0 */
     }   
 
-    /* 1/8 递推平均（IIR 低通）：avg = (avg*7 + diff + 新值) / 8
+    /* 1/16 递推平均（IIR 低通）：avg = (avg*15 + diff + 新值) / 16
      * avg == 0 时（首次或外部复位后）直接用新值作初值，跳过滤波 */
     if (temp.avg == 0) temp.avg = temp_val;                         /* 首次直接赋值（跳过滤波） */
-    temp.avg *= 7;                                                  /* 旧值权重 7/8 */
-    temp.avg = temp.avg + temp.diff + temp_val;                     /* 旧值×7 + 上次余数 + 新值 */
-    temp.diff = (uint8_t)(temp.avg % 8);                            /* 保存余数，补偿整除截断误差 */
-    temp.avg >>= 3;                                                 /* 除以 8 → 1/8 递推平均（IIR 低通） */
+    temp.avg *= 15;                                                  /* 旧值权重 15/16 */
+    temp.avg = temp.avg + temp.diff + temp_val;                     /* 旧值×15 + 上次余数 + 新值 */
+    temp.diff = (uint8_t)(temp.avg % 16);                           /* 保存余数，补偿整除截断误差 */
+    temp.avg >>= 4;                                                 /* 除以 16 → 1/16 递推平均（IIR 低通） */
     
-    if (temp.avg >= 999u) temp.avg = 999u;                          /* 输出上限饱和（999：3 位数码管无法显示 1000） */
+    if (temp.avg >= 999u) temp.avg = 999u;                          /* 输出上限饱和（999 = 99.9℃） */
     return temp.avg;
 }

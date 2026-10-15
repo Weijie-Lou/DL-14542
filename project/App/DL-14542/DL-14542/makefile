@@ -18,7 +18,7 @@ NY8_LLVM_ROOT =
 
 CPU := ny8bm84a
 
-C_SRCS = User\adc.c User\display.c User\main.c User\system.c User\temp.c User\gpio.c User\input.c  
+C_SRCS = User\adc.c User\battery.c User\display.c User\gpio.c User\input.c User\main.c User\system.c User\temp.c  
 AS_SRCS =  
 LIB_FILES = 
 OUT_ELF = DL-14542.elf

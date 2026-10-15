@@ -17,7 +17,9 @@
     <CCompilerInstallDir>C:\Nyquest\NYC_NY8</CCompilerInstallDir>
     <ChipId>NY8BM84A</ChipId>
     <ClientName>Weijie</ClientName>
+    <CodeChecksum>On</CodeChecksum>
     <CodeOptimization>Enable</CodeOptimization>
+    <CompilerType>NYC_NY8</CompilerType>
     <Configuration>Debug</Configuration>
     <EnterDebugMode>True</EnterDebugMode>
     <FreezeMode>True</FreezeMode>
@@ -33,6 +35,7 @@
     <OptimizationLevel>0</OptimizationLevel>
     <OutputType>bin</OutputType>
     <Platform>CNy8</Platform>
+    <ProgramChecksum>Off</ProgramChecksum>
     <ProjectGuid>{2B7A72D1-5F0B-44A9-A201-A8DD86C4EE05}</ProjectGuid>
     <ProjectOptionChanged>False</ProjectOptionChanged>
     <ReservedInterruptRam>4</ReservedInterruptRam>
@@ -59,6 +62,7 @@
   <ItemGroup>
     <None Include="DL-14542.cb" EntryPoint="false" MetaData="" />
     <Compile Include="User\adc.c" EntryPoint="false" MetaData="" />
+    <Compile Include="User\battery.c" EntryPoint="false" MetaData="" />
     <Compile Include="User\display.c" EntryPoint="false" MetaData="" />
     <Compile Include="User\gpio.c" EntryPoint="false" MetaData="" />
     <Compile Include="User\input.c" EntryPoint="false" MetaData="" />
@@ -72,16 +76,17 @@
     <Reference Include="IC Body: NY8BM84A" EntryPoint="false" MetaData="" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\common.h" EntryPoint="false" MetaData="Dependency Files\common.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\common-macro.h" EntryPoint="false" MetaData="Dependency Files\common-macro.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\ny8.h" EntryPoint="false" MetaData="Dependency Files\ny8.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\ny8_romaccess.h" EntryPoint="false" MetaData="Dependency Files\ny8_romaccess.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\ny8bm84a.h" EntryPoint="false" MetaData="Dependency Files\ny8bm84a.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYC_NY8\llvm\include\stdint.h" EntryPoint="false" MetaData="Dependency Files\stdint.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYIDE\include\NY8 C\ny8_constant.h" EntryPoint="false" MetaData="Dependency Files\ny8_constant.h" />
-    <ApplicationDefinition Include="C:\Nyquest\NYIDE\include\NY8 C\ny8bm84a_constant.h" EntryPoint="false" MetaData="Dependency Files\ny8bm84a_constant.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\common.h" EntryPoint="false" MetaData="Dependency Files\common.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\common-macro.h" EntryPoint="false" MetaData="Dependency Files\common-macro.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\ny8.h" EntryPoint="false" MetaData="Dependency Files\ny8.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\ny8_romaccess.h" EntryPoint="false" MetaData="Dependency Files\ny8_romaccess.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\ny8bm84a.h" EntryPoint="false" MetaData="Dependency Files\ny8bm84a.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYC_NY8\llvm\include\stdint.h" EntryPoint="false" MetaData="Dependency Files\stdint.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYIDE\include\NY8 C\ny8_constant.h" EntryPoint="false" MetaData="Dependency Files\ny8_constant.h" />
+    <ApplicationDefinition Include="..\..\..\..\..\..\..\..\Nyquest\NYIDE\include\NY8 C\ny8bm84a_constant.h" EntryPoint="false" MetaData="Dependency Files\ny8bm84a_constant.h" />
     <Folder Include="Dependency Files" EntryPoint="false" MetaData="" />
     <ApplicationDefinition Include="Include\adc.h" EntryPoint="false" MetaData="Dependency Files\adc.h" />
+    <ApplicationDefinition Include="Include\battery.h" EntryPoint="false" MetaData="Dependency Files\battery.h" />
     <ApplicationDefinition Include="Include\display.h" EntryPoint="false" MetaData="Dependency Files\display.h" />
     <ApplicationDefinition Include="Include\gpio.h" EntryPoint="false" MetaData="Dependency Files\gpio.h" />
     <ApplicationDefinition Include="Include\input.h" EntryPoint="false" MetaData="Dependency Files\input.h" />
@@ -95,14 +100,19 @@
     <Array name="EEPROMOverwriteData" />
     <Array name="ExternalResource" />
     <Array name="files">
-      <Element value="User/adc.c|True" />
-      <Element value="User/system.c|True" />
-      <Element value="Include/adc.h|True" />
-      <Element value="User/gpio.c|True" />
-      <Element value="User/temp.c|True" />
-      <Element value="Include/temp.h|True" />
-      <Element value="C:/Nyquest/NYIDE/include/NY8 C/ny8bm84a_constant.h|True" />
+      <Element value="User/system.c|False" />
+      <Element value="User/main.c|True" />
+      <Element value="User/battery.c|False" />
       <Element value="User/display.c|False" />
+      <Element value="User/temp.c|False" />
+      <Element value="User/gpio.c|False" />
+      <Element value="User/input.c|True" />
+      <Element value="Include/display.h|False" />
+      <Element value="User/adc.c|False" />
+      <Element value="Include/temp.h|False" />
+      <Element value="Include/input.h|False" />
+      <Element value="../../../../../../../../Nyquest/NYC_NY8/llvm/include/ny8bm84a.h|False" />
+      <Element value="../../../../../../../../Nyquest/NYIDE/include/NY8 C/ny8bm84a_constant.h|False" />
     </Array>
     <Array name="MelodyDatabaseFiles" />
     <Array name="RegisterWindowExpandInfo">
@@ -115,68 +125,94 @@
       <Element value="PORTA@R-Page|False" />
       <Element value="PORTB@R-Page|False" />
       <Element value="PORTC@R-Page|False" />
-      <Element value="PCON@R-Page|False" />
-      <Element value="BWUCON@R-Page|False" />
+      <Element value="OSCCR@R-Page|False" />
       <Element value="PCHBUF@R-Page|False" />
-      <Element value="ABPLCON@R-Page|False" />
-      <Element value="BPHCON@R-Page|False" />
-      <Element value="CPHCON@R-Page|False" />
-      <Element value="INTE@R-Page|False" />
-      <Element value="INTF@R-Page|False" />
-      <Element value="ADMD@R-Page|False" />
-      <Element value="ADR@R-Page|False" />
-      <Element value="ADD@R-Page|False" />
-      <Element value="ADVREFH@R-Page|False" />
-      <Element value="ADCR@R-Page|False" />
+      <Element value="INTCON@R-Page|False" />
+      <Element value="PIR1@R-Page|False" />
+      <Element value="PIR2@R-Page|False" />
+      <Element value="TMRxL@R-Page|False" />
+      <Element value="TMRxH@R-Page|False" />
+      <Element value="TxCR1@R-Page|False" />
+      <Element value="TxCR2@R-Page|False" />
+      <Element value="BZ1CR@R-Page|False" />
       <Element value="AWUCON@R-Page|False" />
-      <Element value="PACON@R-Page|False" />
+      <Element value="BCDWUCON@R-Page|False" />
+      <Element value="PORTACON30@R-Page|False" />
+      <Element value="PORTACON74@R-Page|False" />
+      <Element value="PORTBCON30@R-Page|False" />
+      <Element value="PORTBCON74@R-Page|False" />
+      <Element value="PORTCCON30@R-Page|False" />
+      <Element value="PORTCCON74@R-Page|False" />
+      <Element value="SELCON@R-Page|False" />
+      <Element value="PWMxCON@R-Page|False" />
+      <Element value="T0MD@R-Page|False" />
+      <Element value="IOSTA@R-Page|False" />
+      <Element value="IOSTB@R-Page|False" />
+      <Element value="IOSTC@R-Page|False" />
+      <Element value="LVDCON@R-Page|False" />
+      <Element value="PIE1@R-Page|False" />
+      <Element value="PIE2@R-Page|False" />
+      <Element value="PCON@R-Page|False" />
+      <Element value="IRCR@R-Page|False" />
+      <Element value="PWM1DUTYL@R-Page|False" />
+      <Element value="PWM1DUTYH@R-Page|False" />
+      <Element value="PWM2DUTYL@R-Page|False" />
+      <Element value="PWM2DUTYH@R-Page|False" />
+      <Element value="PWM3DUTYL@R-Page|False" />
+      <Element value="PWM3DUTYH@R-Page|False" />
+      <Element value="PWM4DUTYL@R-Page|False" />
+      <Element value="PWM4DUTYH@R-Page|False" />
+      <Element value="PWM5DUTYL@R-Page|False" />
+      <Element value="PWM5DUTYH@R-Page|False" />
       <Element value="INTEDG@R-Page|False" />
-      <Element value="TMRH@R-Page|False" />
-      <Element value="ANAEN@R-Page|False" />
+      <Element value="CMPCON@R-Page|False" />
+      <Element value="CMPCR@R-Page|False" />
+      <Element value="TBHP@R-Page|False" />
+      <Element value="TBHD@R-Page|False" />
+      <Element value="ADMD@R-Page|False" />
+      <Element value="ADDL@R-Page|False" />
+      <Element value="ADDH@R-Page|False" />
+      <Element value="ADCON1@R-Page|False" />
+      <Element value="ADJMD@R-Page|False" />
+      <Element value="PxCON@R-Page|False" />
+      <Element value="ADCR@R-Page|False" />
+      <Element value="SIMDR@R-Page|False" />
+      <Element value="SIMCR@R-Page|False" />
+      <Element value="SPCR@R-Page|False" />
+      <Element value="MADR@R-Page|False" />
+      <Element value="MFDR@R-Page|False" />
+      <Element value="MCR@R-Page|False" />
+      <Element value="MSR@R-Page|False" />
+      <Element value="DLL@R-Page|False" />
+      <Element value="DLH@R-Page|False" />
+      <Element value="LCR@R-Page|False" />
+      <Element value="LSR@R-Page|False" />
+      <Element value="THR/RBR@R-Page|False" />
+      <Element value="PWMDBx@R-Page|False" />
+      <Element value="CCPxCON@R-Page|False" />
       <Element value="RFC@R-Page|False" />
-      <Element value="TM3RH@R-Page|False" />
-      <Element value="OSCCALH@R-Page|False" />
-      <Element value="OSCCALL@R-Page|False" />
-      <Element value="INTE2@R-Page|False" />
-      <Element value="F-Page|False" />
-      <Element value="IOSTA@F-Page|False" />
-      <Element value="IOSTB@F-Page|False" />
-      <Element value="IOSTC@F-Page|False" />
-      <Element value="APHCON@F-Page|False" />
-      <Element value="PS0CV@F-Page|False" />
-      <Element value="CPLCON@F-Page|False" />
-      <Element value="BODCON@F-Page|False" />
-      <Element value="CODCON@F-Page|False" />
-      <Element value="CMPCR@F-Page|False" />
-      <Element value="PCON1@F-Page|False" />
-      <Element value="S-Page|False" />
-      <Element value="TMR1@S-Page|False" />
-      <Element value="T1CR1@S-Page|False" />
-      <Element value="T1CR2@S-Page|False" />
-      <Element value="PWM1DUTY@S-Page|False" />
-      <Element value="PS1CV@S-Page|False" />
-      <Element value="BZ1CR@S-Page|False" />
-      <Element value="IRCR@S-Page|False" />
-      <Element value="TBHP@S-Page|False" />
-      <Element value="TBHD@S-Page|False" />
-      <Element value="TMR2@S-Page|False" />
-      <Element value="T2CR1@S-Page|False" />
-      <Element value="T2CR2@S-Page|False" />
-      <Element value="PWM2DUTY@S-Page|False" />
-      <Element value="PS2CV@S-Page|False" />
-      <Element value="BZ2CR@S-Page|False" />
-      <Element value="OSCCR@S-Page|False" />
-      <Element value="TMR3@S-Page|False" />
-      <Element value="T3CR1@S-Page|False" />
-      <Element value="T3CR2@S-Page|False" />
-      <Element value="PWM3DUTY@S-Page|False" />
-      <Element value="PS3CV@S-Page|False" />
-      <Element value="BZ3CR@S-Page|False" />
+      <Element value="LCDCON0@R-Page|False" />
+      <Element value="LCDCON1@R-Page|False" />
     </Array>
-    <Array name="ResourceManager" />
+    <Array name="ResourceManager">
+      <Element value="False" />
+      <Element value="False" />
+      <Element value="False" />
+      <Element value="80" />
+      <Element value="0.25ms" />
+      <Element value="Hex" />
+      <Element value="False" />
+      <Element value="True" />
+    </Array>
     <Array name="UpdateableResources" />
     <Array name="VoiceFiles" />
     <Array name="VRModule" />
-    <Array name="WatchItemInfo" />
+    <Array name="WatchItemInfo">
+      <Element value="system|0" />
+      <Element value="display|0" />
+      <Element value="temp|0" />
+      <Element value="battery|0" />
+      <Element value="last_result|0" />
+    </Array>
   </Properties>
 </Project>

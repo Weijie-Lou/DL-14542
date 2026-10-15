@@ -6,7 +6,7 @@
     //   ny8.h、common.h、ny8bm84a.h、common-macro.h、ny8_constant.h、ny8bm84a_constant.h、stdint.h
     "configurations": [
         {
-            "name": "NY8-NY8BM84A",
+            "name": "NY8BM84A",
             "includePath": [
                 // 工程自身头文件（源码以 #include "gpio.h" 形式引用）
                 "${workspaceFolder}/project/App/DL-14542/DL-14542/Include",

@@ -76,7 +76,8 @@ typedef enum {
 void ADC_Init(ADC_Channel_t ch, ADC_Reference_t ref, ADC_Clock_t clk);
 /** @brief 关闭 ADC（ADMD 写 0：同时清 ADEN 使能与通道选择） */
 void ADC_Disable(void);
-/** @brief 阻塞式转换，返回 12 位结果（查询 EOC 等待完成） */
+/** @brief 阻塞式转换，返回 12 位结果（查询 EOC 等待完成）
+ *  @note  带超时保护：长时间等不到 EOC 时返回上一次的有效结果，避免读数跳变 */
 uint16_t ADC_Convert(void);
 
 #endif  /* _ADC_H_ */

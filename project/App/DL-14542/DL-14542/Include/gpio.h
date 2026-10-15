@@ -57,7 +57,7 @@ void GPIO_Init(void);
 /* GPIO_SET_PULL / GPIO_SET_WAKEUP / GPIO_SET_ANALOG：
  * 以宏形式提供，端口参数与 GPIO_SET_INPUT 等宏一致，直接传寄存器（如 PORTA/PORTB/PORTC），
  * 内部经 & 取地址后由实现函数识别端口。
- * 说明：GPIO_SET_WAKEUP 当前工程未使用（睡眠唤醒依赖 WDT + INT0）。 */
+ * 说明：GPIO_SET_WAKEUP 当前工程未使用（睡眠唤醒只依赖 WDT 中断，触摸为轮询）。 */
 void GPIO_SET_PULL_IMPL(volatile __rpage unsigned char *port, GPIO_Pin pin, GPIO_Pull pull);
 #define GPIO_SET_PULL(port, pin, pull)      GPIO_SET_PULL_IMPL(&(port), (pin), (pull))
 
